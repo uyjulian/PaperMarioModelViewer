@@ -143,68 +143,68 @@ public:
 	}
 
 	Image DecodeCMPR (const std::vector<u8>& buffer, int bufferOffset) const {
-		int Width = texWidth;
-		int Height = texHeight;
-		int Offset = bufferOffset;
-		int ww = AddPadding(Width,8) / 2;
-		std::vector<int> Color(4);
-        
-		Image img(texWidth, texHeight, Image::RGBA8);
-
-		for (int y = 0; y < Height; y += 4)
-		{
-		    for (int x = 0; x < Width; x += 4)
-		    {
-		    	int Pos = (((x>>2)&1) + (2*((y>>2)&1)) + (4*(x>>3)) + (ww*(y>>3))) * 8;
-		    	
-		    	// int c0 = buffer[Offset+Pos:Offset+Pos+2];
-		    	// int c1 = buffer[Offset+Pos+2:Offset+Pos+4];
-		        std::vector<u8> tmp1(2);
-		        tmp1[1] = buffer[Offset + Pos];
-		        tmp1[0] = buffer[Offset + Pos + 1];
-                int c0 = ToUInt16(tmp1);
-		        tmp1[1] = buffer[Offset + Pos + 2];
-		        tmp1[0] = buffer[Offset + Pos + 3];
-		        int c1 = ToUInt16(tmp1);
-		    	
-		    	Color[0] = ((c0 & 0xf800) << 16)  | ((c0 & 0xe000) << 11)  | ((c0 & 0x07e0) << 13)  | ((c0 & 0x0600) <<  7)  | ((c0 & 0x001f) << 11)  | ((c0 & 0x001c) <<  6) | 0xFF;
-		    	Color[1] = ((c1 & 0xf800) << 16)  | ((c1 & 0xe000) << 11)  | ((c1 & 0x07e0) << 13)  | ((c1 & 0x0600) <<  7)  | ((c1 & 0x001f) << 11)  | ((c1 & 0x001c) <<  6) | 0xFF;
-		    	if (c0 > c1)
-		    	{
-		    		Color[2] = ((((Color[0]>>24)*2+( Color[1]>>24))/3) << 24) | (((((Color[0]>>16)&0xFF)*2+((Color[1]>>16)&0xFF))/3) << 16) | (((((Color[0]>> 8)&0xFF)*2+((Color[1]>> 8)&0xFF))/3) << 8) | 0xFF;
-		    		Color[3] = ((((Color[0]>>24)+( Color[1]>>24)*2)/3) << 24) | (((((Color[0]>>16)&0xFF)+((Color[1]>>16)&0xFF)*2)/3) << 16) | (((((Color[0]>> 8)&0xFF)+((Color[1]>> 8)&0xFF)*2)/3) << 8) | 0xFF;
-		    	}
-		    	else
-		    	{
-		    		Color[2] = ((((Color[0]>>24)+( Color[1]>>24))/2) << 24) | (((((Color[0]>>16)&0xFF)+((Color[1]>>16)&0xFF))/2) << 16) | (((((Color[0]>>8)&0xFF)+((Color[1]>>8)&0xFF))/2) << 8) | 0xFF;
-		    		Color[3] = 0;
-		    	}
-
-		        std::vector<u8> pixeldata(4);
-		        pixeldata[3] = buffer[Offset + Pos + 4];
-		        pixeldata[2] = buffer[Offset + Pos + 5];
-		        pixeldata[1] = buffer[Offset + Pos + 6];
-		        pixeldata[0] = buffer[Offset + Pos + 7];
-		        u32 Indexes = ToUInt32(pixeldata);
-		    	//int Indexes = buffer[Offset+Pos+4:Offset+Pos+8];
-		        for (int y1 = 0; y1 < 4; y1++) {
-		       		for (int x1 = 0; x1 < 4; x1++) {
-                        if (!(((x+x1) >= Width) || ((y+y1) >= Height))) {
-                            u32 pizx = Color[(Indexes >> (30 - (x1*2 + y1*8))) & 0x03];
-                            u8 r = (((pizx>>24) & 0xFF));
-                            u8 g = (((pizx>>16) & 0xFF));
-                            u8 b = ((pizx>>8) & 0xFF);
-                            u8 a = (pizx & 0xFF);
-                            Color8 colorpix;
-                            colorpix.set(b, g, r, a);
-                            img.setPixel(((x+x1) ), ((y+y1) ), colorpix);
-                        }
-		        	}
-		        }
-                
-		    }
-            
-		}
+//		int Width = texWidth;
+//		int Height = texHeight;
+//		int Offset = bufferOffset;
+//		int ww = AddPadding(Width,8) / 2;
+//		std::vector<int> Color(4);
+//        
+//		Image img(texWidth, texHeight, Image::RGBA8);
+//
+//		for (int y = 0; y < Height; y += 4)
+//		{
+//		    for (int x = 0; x < Width; x += 4)
+//		    {
+//		    	int Pos = (((x>>2)&1) + (2*((y>>2)&1)) + (4*(x>>3)) + (ww*(y>>3))) * 8;
+//		    	
+//		    	// int c0 = buffer[Offset+Pos:Offset+Pos+2];
+//		    	// int c1 = buffer[Offset+Pos+2:Offset+Pos+4];
+//		        std::vector<u8> tmp1(2);
+//		        tmp1[1] = buffer[Offset + Pos];
+//		        tmp1[0] = buffer[Offset + Pos + 1];
+//                int c0 = ToUInt16(tmp1);
+//		        tmp1[1] = buffer[Offset + Pos + 2];
+//		        tmp1[0] = buffer[Offset + Pos + 3];
+//		        int c1 = ToUInt16(tmp1);
+//		    	
+//		    	Color[0] = ((c0 & 0xf800) << 16)  | ((c0 & 0xe000) << 11)  | ((c0 & 0x07e0) << 13)  | ((c0 & 0x0600) <<  7)  | ((c0 & 0x001f) << 11)  | ((c0 & 0x001c) <<  6) | 0xFF;
+//		    	Color[1] = ((c1 & 0xf800) << 16)  | ((c1 & 0xe000) << 11)  | ((c1 & 0x07e0) << 13)  | ((c1 & 0x0600) <<  7)  | ((c1 & 0x001f) << 11)  | ((c1 & 0x001c) <<  6) | 0xFF;
+//		    	if (c0 > c1)
+//		    	{
+//		    		Color[2] = ((((Color[0]>>24)*2+( Color[1]>>24))/3) << 24) | (((((Color[0]>>16)&0xFF)*2+((Color[1]>>16)&0xFF))/3) << 16) | (((((Color[0]>> 8)&0xFF)*2+((Color[1]>> 8)&0xFF))/3) << 8) | 0xFF;
+//		    		Color[3] = ((((Color[0]>>24)+( Color[1]>>24)*2)/3) << 24) | (((((Color[0]>>16)&0xFF)+((Color[1]>>16)&0xFF)*2)/3) << 16) | (((((Color[0]>> 8)&0xFF)+((Color[1]>> 8)&0xFF)*2)/3) << 8) | 0xFF;
+//		    	}
+//		    	else
+//		    	{
+//		    		Color[2] = ((((Color[0]>>24)+( Color[1]>>24))/2) << 24) | (((((Color[0]>>16)&0xFF)+((Color[1]>>16)&0xFF))/2) << 16) | (((((Color[0]>>8)&0xFF)+((Color[1]>>8)&0xFF))/2) << 8) | 0xFF;
+//		    		Color[3] = 0;
+//		    	}
+//
+//		        std::vector<u8> pixeldata(4);
+//		        pixeldata[3] = buffer[Offset + Pos + 4];
+//		        pixeldata[2] = buffer[Offset + Pos + 5];
+//		        pixeldata[1] = buffer[Offset + Pos + 6];
+//		        pixeldata[0] = buffer[Offset + Pos + 7];
+//		        u32 Indexes = ToUInt32(pixeldata);
+//		    	//int Indexes = buffer[Offset+Pos+4:Offset+Pos+8];
+//		        for (int y1 = 0; y1 < 4; y1++) {
+//		       		for (int x1 = 0; x1 < 4; x1++) {
+//                        if (!(((x+x1) >= Width) || ((y+y1) >= Height))) {
+//                            u32 pizx = Color[(Indexes >> (30 - (x1*2 + y1*8))) & 0x03];
+//                            u8 r = (((pizx>>24) & 0xFF));
+//                            u8 g = (((pizx>>16) & 0xFF));
+//                            u8 b = ((pizx>>8) & 0xFF);
+//                            u8 a = (pizx & 0xFF);
+//                            Color8 colorpix;
+//                            colorpix.set(b, g, r, a);
+//                            img.setPixel(((x+x1) ), ((y+y1) ), colorpix);
+//                        }
+//		        	}
+//		        }
+//                
+//		    }
+//            
+//		}
 
 //        
 //        int width = texWidth;
@@ -299,41 +299,41 @@ public:
 //        
 //        
 //
-//		int bpp = EncodingBPP (type);
-//		int tilebpp = bpp / cacheLinesPerTile;
-//		int tileWidth = TileWidth(cacheLineSize, tilebpp);
-//		int tileHeight = (cacheLineSize * 8) / (tileWidth * tilebpp);
-//
-//		// Create tile-aligned virtual width and height
-//		int virWidth = texWidth;
-//		int virHeight = texHeight;
-//		if (virWidth % tileWidth != 0) {
-//			virWidth += tileWidth - (virWidth % tileWidth);
-//		}
-//		if (virHeight % tileHeight != 0) {
-//			virHeight += tileHeight - (virHeight % tileHeight);
-//		}
-//
-//		int tilesWide = virWidth / tileWidth;
-//		int tilesHigh = virHeight / tileHeight;
-//
-//		Image img(texWidth, texHeight, Image::RGBA8);
-//
-//		// Decode tiles
-//		for (int y = 0; y < tilesHigh; y++) {
-//			for (int x = 0; x < tilesWide; x++) {
-//				int tileData = bufferOffset + (y * tilesWide * cacheLineSize) + (x * cacheLineSize);
-//				std::vector<Color8> pixels(tileWidth * tileHeight);
-//
-//				// Decode blocks
-//				for (int i = 0; i < 4; i++) {
-//					int blockData = tileData + (i * 8);
-//					DecodeCMPRBlock(x, y, i, buffer, blockData, pixels);
-//				}
-//
-//				img.setPixelBlock(x * tileWidth, y * tileHeight, tileWidth, tileHeight, pixels, 0, tileWidth);
-//			}
-//		}
+		int bpp = EncodingBPP (type);
+		int tilebpp = bpp / cacheLinesPerTile;
+		int tileWidth = TileWidth(cacheLineSize, tilebpp);
+		int tileHeight = (cacheLineSize * 8) / (tileWidth * tilebpp);
+
+		// Create tile-aligned virtual width and height
+		int virWidth = texWidth;
+		int virHeight = texHeight;
+		if (virWidth % tileWidth != 0) {
+			virWidth += tileWidth - (virWidth % tileWidth);
+		}
+		if (virHeight % tileHeight != 0) {
+			virHeight += tileHeight - (virHeight % tileHeight);
+		}
+
+		int tilesWide = virWidth / tileWidth;
+		int tilesHigh = virHeight / tileHeight;
+
+		Image img(texWidth, texHeight, Image::RGBA8);
+
+		// Decode tiles
+		for (int y = 0; y < tilesHigh; y++) {
+			for (int x = 0; x < tilesWide; x++) {
+				int tileData = bufferOffset + (y * tilesWide * cacheLineSize) + (x * cacheLineSize);
+				std::vector<Color8> pixels(tileWidth * tileHeight);
+
+				// Decode blocks
+				for (int i = 0; i < 4; i++) {
+					int blockData = tileData + (i * 8);
+					DecodeCMPRBlock(x, y, i, buffer, blockData, pixels);
+				}
+
+				img.setPixelBlock(x * tileWidth, y * tileHeight, tileWidth, tileHeight, pixels, 0, tileWidth);
+			}
+		}
 
 		return img;
 	}
